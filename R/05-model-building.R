@@ -92,9 +92,10 @@ model <- train(formula(model_9),
 print(model)
 
 
+model.metrics(model_9, training, method="loocv", trans="log")
 
 
-
+save(model_9, file=here("data", "best-model.rda"))
 
 
 
