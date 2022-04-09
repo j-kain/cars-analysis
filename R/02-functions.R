@@ -8,6 +8,7 @@ model.metrics <- function(model, data, method="none", trans="none"){
     ybar <- data %>% pull(msrp) %>% mean() 
     yhat <- NULL
     
+    
     if(method == "none"){
         fit <- lm(formula(model), data=data)
         yhat <- fit$fitted.values
@@ -23,12 +24,12 @@ model.metrics <- function(model, data, method="none", trans="none"){
     }
     
     if(trans=="log"){
-        yhat <- exp(yhat)
-        sse <- sum((y - yhat)^2)
-        sst <- sum((y - ybar)^2)
+        y <- log(y)
+        # yhat <- exp(yhat)
+        # sst <- sum((y - ybar)^2)
     }
     
-    
+    sse <- sum((y - yhat)^2)
     rsq <- cor(y,yhat)^2
     adjrsq <- 1 - ( ((1-rsq) * (n - 1))/(n - p - 1) )
     rmse <- sqrt(sse/n)
