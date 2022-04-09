@@ -9,8 +9,12 @@ data <- raw_data %>%
            mpg=HighwayMPG,
            wt=Weight,
            wb=WheelBase) %>% 
-    select(msrp, everything(), -`Vehicle Name`)
+    select(msrp, everything(), -`Vehicle Name`) %>% 
+    clean_names() %>% 
+    arrange(msrp)
 
+
+save(data, file=here("data", "data-wrangle.rda"))
 
 
 model.metrics <- function(model, data, method="none", trans="none"){
