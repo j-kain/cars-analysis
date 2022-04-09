@@ -13,9 +13,9 @@ data <- raw_data %>%
 
 
 
-loocv <- function(model, data, method="none", trans="none"){
+model.metrics <- function(model, data, method="none", trans="none"){
     n <- nrow(data)
-    p <- length(formula(model))
+    p <- length(coef(model))-1
     y <- data %>% pull(msrp)
     ybar <- data %>% pull(msrp) %>% mean() 
     yhat <- NULL
@@ -43,7 +43,7 @@ loocv <- function(model, data, method="none", trans="none"){
     sst <- sum((y - ybar)^2)
     
     rsq <- cor(y,yhat)^2
-    adjrsq <- 1 - sse/sst * (n - 1)/(n - p - 1)
+    adjrsq <- 1 - ( ((1-rsq) * (n - 1))/(n - p - 1) )
     rmse <- sqrt(sse/n)
     aic <- AIC(fit)
 
@@ -53,9 +53,8 @@ loocv <- function(model, data, method="none", trans="none"){
 
 
 
-m1 <- lm(msrp ~ hp+wt+cyl, data=data); summary(m1)
-loocv(m1, data, method="none",trans="none")
-
+m1 <- lm(msrp ~ hp+wt+cyl+I(cyl^2)+wb, data=data); summary(m1)
+model.metrics(m1, data, method="none",trans="none")
 
 
 
