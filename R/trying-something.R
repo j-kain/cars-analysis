@@ -81,6 +81,9 @@ m3 <- lm(log(msrp)~
              I(wt^2) +
              I(wb^2), data=data)
 
+
+
+
 fss <- ols_step_forward_p(m2)
 
 
