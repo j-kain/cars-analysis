@@ -1,4 +1,4 @@
 
 
+autoplot(model_9)
 
-plot(model_9)

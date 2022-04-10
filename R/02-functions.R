@@ -25,8 +25,6 @@ model.metrics <- function(model, data, method="none", trans="none"){
     
     if(trans=="log"){
         y <- log(y)
-        # yhat <- exp(yhat)
-        # sst <- sum((y - ybar)^2)
     }
     
     sse <- sum((y - yhat)^2)
