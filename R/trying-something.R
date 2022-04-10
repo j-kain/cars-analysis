@@ -1,5 +1,8 @@
 raw_data <- read_csv(here("data","cars.csv"))
 
+data <- separate(raw_data, 'Vehicle Name', c("make", "model"), sep=" ", extra="merge")
+
+
 
 data <- raw_data %>% 
     rename(msrp=SuggestedRetailPrice,
@@ -10,6 +13,19 @@ data <- raw_data %>%
            wt=Weight,
            wb=WheelBase) %>% 
     select(msrp, everything(), -`Vehicle Name`) %>% 
+    clean_names() %>% 
+    arrange(msrp)
+
+
+data <- data %>% 
+    rename(msrp=SuggestedRetailPrice,
+           disp=EngineSize,
+           cyl=Cylinders,
+           hp=Horsepower,
+           mpg=HighwayMPG,
+           wt=Weight,
+           wb=WheelBase) %>% 
+    select(msrp, everything(), -model) %>% 
     clean_names() %>% 
     arrange(msrp)
 
@@ -51,21 +67,52 @@ model.metrics <- function(model, data, method="none", trans="none"){
     list(Rsq = rsq, AdjRsq = adjrsq, RMSE = rmse, AIC=aic)
 }
 
-
-
+dt <- dummy_cols(data, select_columns = "make")
+dt <- dt %>% clean_names() %>% select(-make)
 
 m1 <- lm(msrp ~ hp+wt+cyl+I(cyl^2)+wb, data=data)
-m2 <- lm(log(msrp)~.+
+m2 <- lm(log(msrp)+
              I(disp^2) +
              I(cyl^2) +
-             I(cyl^3) +
              I(hp^2) +
              I(mpg^2) +
-             I(mpg^3) +
              I(wt^2) +
-             I(wb^2) + 
-             mpg*wt +
-             mpg*wt,data=data)
+             I(wb^2) +
+             make_bmw, data=dt)
+
+mk <- dt %>% 
+    select(msrp,starts_with("make"))
+
+m2a <- lm(log(msrp)~., data=mk)
+mk1 <- summary(m2a)$coef[summary(m2a)$coef[,4] < 0.05,0]
+
+
+
+
+m2bb <- lm(log(msrp)~
+               make_chevrolet + 
+               make_chrysler + 
+           make_dodge  +      
+           make_ford  +       
+           make_honda +       
+           make_hyundai  +    
+           make_jaguar  +     
+           make_kia   +       
+           make_mazda6  +     
+           make_mercedes_benz+
+           make_mercury      +
+           make_mini     +    
+           make_nissan      + 
+           make_oldsmobile  + 
+           make_pontiac   +   
+           make_saturn  +     
+           make_scion +       
+           make_subaru +      
+           make_suzuki +      
+           make_toyota +      
+           make_volkswagen, data=dt )
+
+ols_step_best_subset_p(m2)
 
 m3 <- lm(log(msrp)~
              hybrid +
@@ -81,13 +128,23 @@ m3 <- lm(log(msrp)~
              I(wt^2) +
              I(wb^2), data=data)
 
-
+m3a <- lm(log(msrp)~
+              disp +
+              cyl +
+              hp +
+              mpg +
+              wt +
+              wb +
+              I(disp^2) +
+              I(mpg^2) +
+              I(wt^2) +
+              I(wb^2), data=data)
 
 
 fss <- ols_step_forward_p(m2)
 
 
-model.metrics(m3, data, method="loocv",trans="log")
+model.metrics(m2, dt, method="loocv",trans="log")
 
 t <- data.frame(hybrid=0, disp=5.5, cyl=12, hp=493, mpg=19, wt=4473, wb=114)
 exp(predict(m2, newdata=t))
