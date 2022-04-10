@@ -13,10 +13,10 @@ model_full <- lm(log(msrp)~. +
              I(wb^2), data=training)
 
 
-BSS <- ols_step_best_subset(model_full)
+# BSS <- ols_step_best_subset(model_full)
 
 
-data.frame(n=BSS$n, predictors=BSS$predictors, rsq=BSS$rsquare, adrsq=BSS$adjr, cp=BSS$cp, aic=BSS$aic)
+# data.frame(n=BSS$n, predictors=BSS$predictors, rsq=BSS$rsquare, adrsq=BSS$adjr, cp=BSS$cp, aic=BSS$aic)
 
 model_7 <- lm(log(msrp)~
                   disp +
@@ -84,15 +84,15 @@ rmse_10 <- model.metrics(model_10, training, method="loocv", trans="log")$RMSE
 
 rbind(rmse_9, rmse_10)
 
-model <- train(formula(model_9), 
-               data=training, 
-               method="lm",
-               trControl=trainControl(method="LOOCV"))
-
-print(model)
-
-
-model.metrics(model_9, training, method="loocv", trans="log")
+# model <- train(formula(model_9), 
+#                data=training, 
+#                method="lm",
+#                trControl=trainControl(method="LOOCV"))
+# 
+# print(model)
+# 
+# 
+# model.metrics(model_9, training, method="loocv", trans="log")
 
 
 save(model_9, file=here("data", "best-model.rda"))
