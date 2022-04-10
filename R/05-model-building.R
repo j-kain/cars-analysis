@@ -16,11 +16,11 @@ model_full <- lm(log(msrp)~. +
 # BSS <- ols_step_best_subset(model_full)
 
 
-<<<<<<< HEAD
+
 BSS_results <- data.frame(n=BSS$n, predictors=BSS$predictors, rsq=BSS$rsquare, adrsq=BSS$adjr, cp=BSS$cp, aic=BSS$aic)
-=======
+
 # data.frame(n=BSS$n, predictors=BSS$predictors, rsq=BSS$rsquare, adrsq=BSS$adjr, cp=BSS$cp, aic=BSS$aic)
->>>>>>> b3fa7864d28ad43ccb668750aa539cf8f891bf56
+
 
 model_7 <- lm(log(msrp)~
                   disp +
